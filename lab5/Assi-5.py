@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[34]:
 
 
 from sklearn import datasets
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 
-# In[43]:
+# In[21]:
 
 
 data = datasets.load_breast_cancer()
@@ -18,16 +20,16 @@ x = np.array(data.data[:,:])
 y = np.array(data.target)
 
 
-# In[44]:
+# In[22]:
 
 
 class LogisticRegression_new:
-    def __init__(self, lr=0.01, num_iter=100000, fit_intercept=True, verbose=False,lamb = 0.1):
+    def __init__(self, lr=0.01, num_iter=100000, fit_intercept=True, verbose=False,lamb = 0.1,theta=np.zeros(10)):
         self.lr = lr
         self.num_iter = num_iter
         self.fit_intercept = fit_intercept
         self.verbose = verbose
-        self.theta = np.zeros(10)
+        self.theta = theta
         self.lamb = lamb
     def __add_intercept(self, X):
         intercept = np.ones((X.shape[0], 1))
@@ -73,7 +75,7 @@ class LogisticRegression_new:
         return self.theta
 
 
-# In[45]:
+# In[23]:
 
 
 x_train,x_test, y_train, y_test = train_test_split(x,y,test_size = 0.4, random_state = 0)
@@ -84,7 +86,7 @@ model.print_weights()
 print("Score = ",(preds == y_test).mean())
 
 
-# In[46]:
+# In[24]:
 
 
 reg = 0
@@ -100,13 +102,13 @@ for i in range(0,10,1):
         
 
 
-# In[47]:
+# In[25]:
 
 
 print(reg, max_score)
 
 
-# In[73]:
+# In[26]:
 
 
 def k_fold_cross(x, y, k):
@@ -142,14 +144,41 @@ def k_fold_cross(x, y, k):
     return optimum_weights
 
 
-# In[74]:
+# In[27]:
 
 
 optimum_weights = k_fold_cross(x,y,10)
 
 
-# In[75]:
+# In[28]:
 
 
 optimum_weights
+
+
+# In[31]:
+
+
+x_train,x_test, y_train, y_test = train_test_split(x,y,test_size = 0.4, random_state = 0)
+
+
+# In[32]:
+
+
+new_model = LogisticRegression_new(lr=0.1, num_iter=1000,lamb = reg, theta = optimum_weights)
+y_pred1 = new_model.predict(x_train)
+y_pred2 = new_model.predict(x_test)
+
+
+# In[33]:
+
+
+print("Score = ",(y_pred1 == y_train).mean())
+print("Score = ",(y_pred2 == y_test).mean())
+
+
+# In[ ]:
+
+
+
 
